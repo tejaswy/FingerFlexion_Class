@@ -1,0 +1,19 @@
+function features =FeatureExtract(data,x)
+
+[time channels]=size(data);
+avg_data  = mean(data,2);
+% CAR-filtered signal
+CAR_data  = zeros(time, channels);
+for i=1:channels
+    CAR_data(:,i)  = data(:,i)-avg_data;
+end
+
+power_gamma= GammaBandPower(CAR_data);
+
+%% Averaging power in x ms window
+mean_power_signal   =    zeros(time/x,channels);
+for i=1:channels
+    mean_power_signal(:,i)=(mean(buffer(power_gamma(:,i),x)))';
+end
+features= mean_power_signal;
+end
