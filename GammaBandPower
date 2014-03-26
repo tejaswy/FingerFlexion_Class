@@ -1,0 +1,9 @@
+function  power_gamma = GammaBandPower(signal)
+
+% band pass filtering between 66 and 114 Hz for Power in gamma band   
+[b,a] = butter(3, [66 114]/500, 'bandpass');
+gamma_band_signal= filter(b,a,signal);
+
+% approximating power to voltage square
+power_gamma= (gamma_band_signal.^2);
+end
