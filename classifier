@@ -1,0 +1,25 @@
+function [predTest_dg, actualTest_dg] = fingerFlexClassifier(test_data,train_data, train_dg, test_dg,x_train,x_test,feature_choice)
+
+train_features    =  FeatureExtract(train_data,x_train);
+train_label       =  trainLabel(train_dg,x_train);
+test_features     =  FeatureExtract(test_data,x_test);
+actualTest_dg     =  testLabel(test_dg,x_test);
+
+
+% feature_choice =1  % for all the channels for features
+% feature_choice =2  % for the tip 5 correlated channels i.e channel 38 to
+% 45 (for best results)
+% feature_choice =3  % for 39th channel
+
+switch (feature_choice)
+    case 1
+        nb = NaiveBayes.fit(train_features, train_label)
+        predTest_dg= nb.predict(test_features);
+    case 2
+        nb = NaiveBayes.fit(train_features(:,[38:45]), train_label)
+        predTest_dg= nb.predict(test_features(:,[38:45]));
+    case 3
+        nb = NaiveBayes.fit(train_features(:,39), train_label);
+        predTest_dg= nb.predict(test_features(:,39));
+end
+end
