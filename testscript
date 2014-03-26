@@ -1,0 +1,59 @@
+clc
+clear all
+close all
+
+load sub1_comp.mat               % 62 ch
+load sub1_testlabels.mat
+
+% load sub2_comp.mat               % 48 ch
+% load sub2_testlabels.mat
+% 
+% load sub3_comp.mat               % 64 ch
+% load sub3_testlabels.mat
+
+% Specify window length for averaging
+x_train = 2000;
+x_test  = 2000;
+
+% feature_choice =1  % for all the channels for features
+% feature_choice =2  % for the tip 5 correlated channels i.e channel 38 to
+% 45 (for best results)
+% feature_choice =3  % for 39th channel
+
+%Using Naive Bayes Classifier
+
+[predTest_dg, actualTest_dg] = fingerFlexClassifier(test_data,train_data, train_dg, test_dg,x_train,x_test,2);
+
+plot(predTest_dg,'k');hold on 
+plot(actualTest_dg,'r'); title('Actual vs Predicted labels');
+xlabel('Time(x window length for time in ms)')
+ylabel('Label')
+legend('Predicted','Actual');
+figure
+
+
+%%%%%%%%%%%%%% Pearson coefficient %%%%%%%%%%%%
+disp('Pearson''s correlation coefficient');
+p=cov(predTest_dg,actualTest_dg)/sqrt(var(predTest_dg)*var(actualTest_dg))
+
+
+%%%%%%%%%  Classification error %%%%%%%%%%%%
+disp('classfication error i.e. count of actual label not equal to predicted label');
+disp(num2str((sum(actualTest_dg ~= predTest_dg))))
+disp('in total of');
+disp(num2str(length(actualTest_dg)));
+disp('Giving an accuracy of ')
+((1- (sum(actualTest_dg ~= predTest_dg)/length(actualTest_dg)))*100)
+disp('compared to a chance rate of 16.67%')
+
+%%%%%%%%%%%%%%%     CONFUSION MATRICES     %%%%%%%%
+[C,order] = confusionmat(predTest_dg, actualTest_dg)
+imagesc(C);
+colorbar;
+colormap(flipud(gray));
+xlabel('predicted label');ylabel('Actual label');
+set(gca,'XTick',1:6,...                         %# Change the axes tick marks
+        'XTickLabel',{'Rest','Thumb','Index','Middle','Ring','Pinkie'},...  %#   and tick labels
+        'YTick',1:6,...
+        'YTickLabel',{'Rest','Thumb','Index','Middle','Ring','Pinkie'},...
+        'TickLength',[0 0]);
