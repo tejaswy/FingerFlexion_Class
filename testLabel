@@ -1,0 +1,23 @@
+function label= testLabel(dg_signal,x)
+[b,a] = butter(3, [0.1 2.5]/12.5, 'bandpass');
+dg_filt = filter(b,a,dg_signal);
+
+abs_val_n=abs(dg_filt);
+for i=1:5
+    abs_val(:,i)=(mean(buffer(abs_val_n(:,i),x)))';
+end
+
+label=zeros(length(abs_val),1);
+
+for i=1:length(abs_val)
+    if (max(abs_val(i,:)))>0.1
+        [C,I]=max(abs_val(i,:));
+        label(i)= I;
+    end
+end
+end
+
+
+
+
+
